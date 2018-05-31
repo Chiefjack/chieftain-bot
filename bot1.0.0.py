@@ -177,7 +177,7 @@ async def news(ctx):
 @bot.command(pass_context=True)
 async def serverlist(ctx):
 	member = ctx.message.author
-	message = (f"These are the servers Chieftain is in: {len(bot.servers)}!")
+	message = (f"These are the servers Chieftain is in: {len(list(bot.servers))}!")
 	await bot.send_message(member, message)
 	await bot.say("Check your messages!")
 
