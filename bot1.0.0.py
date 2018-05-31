@@ -29,7 +29,7 @@ async def on_member_join(member):
 
 @bot.command(pass_context=True)
 async def playingstatus(ctx):
-	await bot.change_presence(game=discord.Game(name="c!help for commands", type=0), status=discord.Status("online")
+	await bot.change_presence(game=discord.Game(name="c!help for commands", type=0), status=discord.Status("online"))
 	await bot.say("Successfully changed playing status!")
 
 #HELP COMMANDS
