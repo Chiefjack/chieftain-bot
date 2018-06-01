@@ -149,7 +149,7 @@ async def serverinfo(ctx):
 	
 @bot.command(pass_context=True)
 async def invite(ctx):
-	await bot.say("To add me to your server, click this link: https://discordapp.com/oauth2/authorize?client_id=451031681760100362&scope=bot&permissions=2146958591")
+	await bot.say("To add me to your server, click this link: https://discordapp.com/oauth2/authorize?client_id=451031681760100362&permissions=2146823415&scope=bot")
 
 @bot.command(pass_context=True)
 async def botinfo(ctx):
@@ -160,7 +160,7 @@ async def botinfo(ctx):
 	embed.add_field(name="My Server", value="https://discord.gg/xUMA9jR")
 	embed.add_field(name="Support Me", value="https://www.patreon.com/chiefjack")
 	embed.add_field(name="Sub To My YouTube", value="https://www.youtube.com/GamingWChiefJack")
-	embed.add_field(name="Invite Link", value="https://discordapp.com/oauth2/authorize?client_id=451031681760100362&scope=bot&permissions=2146958591")
+	embed.add_field(name="Invite Link", value="https://discordapp.com/oauth2/authorize?client_id=451031681760100362&permissions=2146823415&scope=bot")
 	embed.set_thumbnail(url=bot.user.avatar_url)
 	await bot.say(embed=embed)
 
@@ -170,7 +170,7 @@ async def news(ctx):
 	embed.add_field(name="31st May 2018, Release 1.0.0!", value="I am beyond excited to announce that the @Chieftain#1827 bot I've worked on for the past day or two is now being hosted on an online server 24/7 (or at least it should be :joy:)! This means that the bot is on release 1.0.0! I will continue developing this bot but I need **YOUR** input on what I should try and add to the bot! To do so, join my server ( https://discord.gg/xUMA9jR ). I've made a beta testers role for people who want to try out new features early, you can give yourself the role by typing ?rank beta tester in #bots_and_spam! This unlocks #chieftain_beta_testing where you can give me ideas for bot commands **AND** try out new features early! What's not to love!")
 	embed.add_field(name="Support Me", value="https://www.patreon.com/chiefjack")
 	embed.add_field(name="Sub To My YouTube", value="https://www.youtube.com/GamingWChiefJack")
-	embed.add_field(name="Invite Link", value="https://discordapp.com/oauth2/authorize?client_id=451031681760100362&scope=bot&permissions=2146958591")
+	embed.add_field(name="Invite Link", value="https://discordapp.com/oauth2/authorize?client_id=451031681760100362&permissions=2146823415&scope=bot")
 	embed.set_thumbnail(url=bot.user.avatar_url)
 	await bot.say(embed=embed)
 
