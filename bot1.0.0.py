@@ -1,12 +1,19 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
+from discord import ChannelType
 import asyncio
 import random
-import os
 
 bot = commands.Bot(command_prefix="c!")
 bot.remove_command("help")
+client = discord.Client()
+
+def find_default_channel_for_server(server):
+    for channel in server.channels:
+        if channel.type == ChannelType.text and channel.permissions_for(server.me).send_messages:
+           return channel
+    return None
 
 @bot.event
 async def on_ready():
@@ -18,7 +25,18 @@ async def on_ready():
 
 @bot.event
 async def on_server_join(server):
-	message = (f"Chieftain just joined {server.name}. It is now in {len(bot.servers)} servers!")
+	invite = await bot.invites_from(server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	message = (f"Chieftain just joined {server.name}. It is now in {len(bot.servers)} servers! Invites: {inviteStr}")
+	user = await bot.get_user_info("284398011310800898")
+	await bot.change_presence(game=discord.Game(name="c!help for commands", type=0), status=discord.Status("online"))
+	await bot.send_message(user, message)
+
+@bot.event
+async def on_server_remove(server):
+	message = (f"Chieftain just left {server.name}. It is now in {len(bot.servers)} servers!")
 	user = await bot.get_user_info("284398011310800898")
 	await bot.send_message(user, message)
 
@@ -29,13 +47,42 @@ async def on_member_join(member):
 
 @bot.command(pass_context=True)
 async def playingstatus(ctx):
+	invite = await bot.invites_from(ctx.message.server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	reply = (f"New message in {ctx.message.server.name} ({ctx.message.server.id}), sent by {ctx.message.author} ({ctx.message.author.id})! The message was: {ctx.message.content} ({ctx.message.id}). Invites: {inviteStr}")
+	channel = bot.get_channel("452074067068190721")
+	await bot.send_message(channel, reply)
 	await bot.change_presence(game=discord.Game(name="c!help for commands", type=0), status=discord.Status("online"))
 	await bot.say("Successfully changed playing status!")
+
+@bot.command(pass_context=True)
+async def botupdate(ctx):
+	invite = await bot.invites_from(ctx.message.server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	reply = (f"New message in {ctx.message.server.name} ({ctx.message.server.id}), sent by {ctx.message.author} ({ctx.message.author.id})! The message was: {ctx.message.content} ({ctx.message.id}). Invites: {inviteStr}")
+	channel = bot.get_channel("452074067068190721")
+	await bot.send_message(channel, reply)
+	servers = bot.servers
+	for server in servers:
+		channel = find_default_channel_for_server(server)
+		if channel != None:
+			await bot.send_message(channel, "[UPDATE FROM THE BOT DEVELOPER]\n- Added many backend improvements for me!\n- If you have any feedback for the bot, message me at ChiefJack_YT#4450")
 
 #HELP COMMANDS
 
 @bot.command(pass_context=True)
 async def help(ctx):
+	invite = await bot.invites_from(ctx.message.server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	reply = (f"New message in {ctx.message.server.name} ({ctx.message.server.id}), sent by {ctx.message.author} ({ctx.message.author.id})! The message was: {ctx.message.content} ({ctx.message.id}). Invites: {inviteStr}")
+	channel = bot.get_channel("452074067068190721")
+	await bot.send_message(channel, reply)
 	embed = discord.Embed(title="**COMMANDS**", description="This bots commands are shown below (the prefix is c!)"
 															"\n---", color=0x00ff00)
 	embed.add_field(name="**HELP COMMANDS**", value= "**c!help** - Displays this message for the list of bot commands\n"
@@ -66,61 +113,117 @@ async def help(ctx):
 	
 @bot.command(pass_context=True)
 async def ping(ctx):
+	invite = await bot.invites_from(ctx.message.server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	reply = (f"New message in {ctx.message.server.name} ({ctx.message.server.id}), sent by {ctx.message.author} ({ctx.message.author.id})! The message was: {ctx.message.content} ({ctx.message.id}). Invites: {inviteStr}")
+	channel = bot.get_channel("452074067068190721")
+	await bot.send_message(channel, reply)
 	await bot.say(":ping_pong: PONG")
 
 @bot.command(pass_context=True)
 async def dice(ctx):
+	invite = await bot.invites_from(ctx.message.server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	reply = (f"New message in {ctx.message.server.name} ({ctx.message.server.id}), sent by {ctx.message.author} ({ctx.message.author.id})! The message was: {ctx.message.content} ({ctx.message.id}). Invites: {inviteStr}")
+	channel = bot.get_channel("452074067068190721")
+	await bot.send_message(channel, reply)
 	number = random.randint(1,6)
 	await bot.say(f"Your random number is: {number}")
 
 @bot.command(pass_context=True)
 async def eightball(ctx):
-		answer = random.choice(["It is certain :8ball:",
-								"It is decidedly so :8ball:",
-								"Without a doubt :8ball:",
-								"Yes, definitely :8ball:",
-								"You may rely on it :8ball:",
-								"As I see it, yes :8ball:",
-								"Most likely :8ball:",
-								"Outlook good :8ball:",
-								"Yes :8ball:",
-								"Signs point to yes :8ball:",
-								"Reply hazy try again :8ball:",
-								"Ask again later :8ball:",
-								"Better not tell you now :8ball:",
-								"Cannot predict now :8ball:",
-								"Concentrate and ask again :8ball:",
-								"Don't count on it :8ball:",
-								"My reply is no :8ball:",
-								"My sources say no :8ball:",
-								"Outlook not so good :8ball:",
-								"Very doubtful :8ball:"])
-		if ctx.message.content.endswith("?"):
-			await bot.say(f"{answer}")
-		else:
-			await bot.say("That is not a question, your question needs a question mark (?) at the end!")
+	invite = await bot.invites_from(ctx.message.server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	reply = (f"New message in {ctx.message.server.name} ({ctx.message.server.id}), sent by {ctx.message.author} ({ctx.message.author.id})! The message was: {ctx.message.content} ({ctx.message.id}). Invites: {inviteStr}")
+	channel = bot.get_channel("452074067068190721")
+	await bot.send_message(channel, reply)
+	answer = random.choice(["It is certain :8ball:",
+							"It is decidedly so :8ball:",
+							"Without a doubt :8ball:",
+							"Yes, definitely :8ball:",
+							"You may rely on it :8ball:",
+							"As I see it, yes :8ball:",
+							"Most likely :8ball:",
+							"Outlook good :8ball:",
+							"Yes :8ball:",
+							"Signs point to yes :8ball:",
+							"Reply hazy try again :8ball:",
+							"Ask again later :8ball:",
+							"Better not tell you now :8ball:",
+							"Cannot predict now :8ball:",
+							"Concentrate and ask again :8ball:",
+							"Don't count on it :8ball:",
+							"My reply is no :8ball:",
+							"My sources say no :8ball:",
+							"Outlook not so good :8ball:",
+							"Very doubtful :8ball:"])
+	if ctx.message.content.endswith("?"):
+		await bot.say(f"{answer}")
+	else:
+		await bot.say("That is not a question, your question needs a question mark (?) at the end!")
 
 @bot.command(pass_context=True)
 async def greet(ctx):
+	invite = await bot.invites_from(ctx.message.server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	reply = (f"New message in {ctx.message.server.name} ({ctx.message.server.id}), sent by {ctx.message.author} ({ctx.message.author.id})! The message was: {ctx.message.content} ({ctx.message.id}). Invites: {inviteStr}")
+	channel = bot.get_channel("452074067068190721")
+	await bot.send_message(channel, reply)
 	await bot.say(f":smiley: :wave: Hey {ctx.message.author.mention}!")
 
 @bot.command(pass_context=True)
 async def add(ctx, a: float, b: float):
+	invite = await bot.invites_from(ctx.message.server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	reply = (f"New message in {ctx.message.server.name} ({ctx.message.server.id}), sent by {ctx.message.author} ({ctx.message.author.id})! The message was: {ctx.message.content} ({ctx.message.id}). Invites: {inviteStr}")
+	channel = bot.get_channel("452074067068190721")
+	await bot.send_message(channel, reply)
 	answer = (a+b)
 	await bot.say(f"Your answer is: {answer}")
 
 @bot.command(pass_context=True)
 async def subtract(ctx, a: float, b: float):
+	invite = await bot.invites_from(ctx.message.server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	reply = (f"New message in {ctx.message.server.name} ({ctx.message.server.id}), sent by {ctx.message.author} ({ctx.message.author.id})! The message was: {ctx.message.content} ({ctx.message.id}). Invites: {inviteStr}")
+	channel = bot.get_channel("452074067068190721")
+	await bot.send_message(channel, reply)
 	answer = (a-b)
 	await bot.say(f"Your answer is: {answer}")
 
 @bot.command(pass_context=True)
 async def multiply(ctx, a: float, b: float):
+	invite = await bot.invites_from(ctx.message.server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	reply = (f"New message in {ctx.message.server.name} ({ctx.message.server.id}), sent by {ctx.message.author} ({ctx.message.author.id})! The message was: {ctx.message.content} ({ctx.message.id}). Invites: {inviteStr}")
+	channel = bot.get_channel("452074067068190721")
+	await bot.send_message(channel, reply)
 	answer = (a*b)
 	await bot.say(f"Your answer is: {answer}")
 
 @bot.command(pass_context=True)
 async def divide(ctx, a: float, b: float):
+	invite = await bot.invites_from(ctx.message.server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	reply = (f"New message in {ctx.message.server.name} ({ctx.message.server.id}), sent by {ctx.message.author} ({ctx.message.author.id})! The message was: {ctx.message.content} ({ctx.message.id}). Invites: {inviteStr}")
+	channel = bot.get_channel("452074067068190721")
+	await bot.send_message(channel, reply)
 	answer = (a/b)
 	await bot.say(f"Your answer is: {answer}")
 
@@ -128,34 +231,62 @@ async def divide(ctx, a: float, b: float):
 
 @bot.command(pass_context=True)
 async def info(ctx, user: discord.Member):
-    embed = discord.Embed(title=f"{user.name}'s info", description="Here's what I could find.", color=0x00ff00)
-    embed.add_field(name="Name", value=user.name, inline=True)
-    embed.add_field(name="ID", value=user.id, inline=True)
-    embed.add_field(name="Status", value=user.status, inline=True)
-    embed.add_field(name="Highest role", value=user.top_role)
-    embed.add_field(name="Joined this server on", value=user.joined_at)
-    embed.set_thumbnail(url=user.avatar_url)
-    await bot.say(embed=embed)
+	invite = await bot.invites_from(ctx.message.server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	reply = (f"New message in {ctx.message.server.name} ({ctx.message.server.id}), sent by {ctx.message.author} ({ctx.message.author.id})! The message was: {ctx.message.content} ({ctx.message.id}). Invites: {inviteStr}")
+	channel = bot.get_channel("452074067068190721")
+	await bot.send_message(channel, reply)
+	embed = discord.Embed(title=f"{user.name}'s info", description="Here's what I could find.", color=0x00ff00)
+	embed.add_field(name="Name", value=user.name, inline=True)
+	embed.add_field(name="ID", value=user.id, inline=True)
+	embed.add_field(name="Status", value=user.status, inline=True)
+	embed.add_field(name="Highest role", value=user.top_role)
+	embed.add_field(name="Joined this server on", value=user.joined_at)
+	embed.set_thumbnail(url=user.avatar_url)
+	await bot.say(embed=embed)
 
 @bot.command(pass_context=True)
 async def serverinfo(ctx):
-    embed = discord.Embed(title=f"{ctx.message.server.name}'s info", description="Here's what I could find.", color=0x00ff00)
-    embed.add_field(name="Name", value=ctx.message.server.name, inline=True)
-    embed.add_field(name="ID", value=ctx.message.server.id, inline=True)
-    embed.add_field(name="Roles", value=len(ctx.message.server.roles), inline=True)
-    embed.add_field(name="Members", value=len(ctx.message.server.members))
-    embed.set_thumbnail(url=ctx.message.server.icon_url)
-    await bot.say(embed=embed)
+	invite = await bot.invites_from(ctx.message.server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	reply = (f"New message in {ctx.message.server.name} ({ctx.message.server.id}), sent by {ctx.message.author} ({ctx.message.author.id})! The message was: {ctx.message.content} ({ctx.message.id}). Invites: {inviteStr}")
+	channel = bot.get_channel("452074067068190721")
+	await bot.send_message(channel, reply)
+	embed = discord.Embed(title=f"{ctx.message.server.name}'s info", description="Here's what I could find.", color=0x00ff00)
+	embed.add_field(name="Name", value=ctx.message.server.name, inline=True)
+	embed.add_field(name="ID", value=ctx.message.server.id, inline=True)
+	embed.add_field(name="Roles", value=len(ctx.message.server.roles), inline=True)
+	embed.add_field(name="Members", value=len(ctx.message.server.members))
+	embed.set_thumbnail(url=ctx.message.server.icon_url)
+	await bot.say(embed=embed)
 	
 @bot.command(pass_context=True)
 async def invite(ctx):
+	invite = await bot.invites_from(ctx.message.server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	reply = (f"New message in {ctx.message.server.name} ({ctx.message.server.id}), sent by {ctx.message.author} ({ctx.message.author.id})! The message was: {ctx.message.content} ({ctx.message.id}). Invites: {inviteStr}")
+	channel = bot.get_channel("452074067068190721")
+	await bot.send_message(channel, reply)
 	await bot.say("To add me to your server, click this link: https://discordapp.com/oauth2/authorize?client_id=451031681760100362&permissions=2146823415&scope=bot")
 
 @bot.command(pass_context=True)
 async def botinfo(ctx):
-	embed = discord.Embed(title="My Info!", description="About me!", color=0x00ff00)
+	invite = await bot.invites_from(ctx.message.server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	reply = (f"New message in {ctx.message.server.name} ({ctx.message.server.id}), sent by {ctx.message.author} ({ctx.message.author.id})! The message was: {ctx.message.content} ({ctx.message.id}). Invites: {inviteStr}")
+	channel = bot.get_channel("452074067068190721")
+	await bot.send_message(channel, reply)
+	embed = discord.Embed(title="My info!", description="About me!", color=0x00ff00)
 	embed.add_field(name="Name", value="Chieftain#1827")
-	embed.add_field(name="Author", value="ChiefJack_YT#4450")
+	embed.add_field(name="Author", value="ChiefJack_YT#4450 (with help from #Alex1304#9704)")
 	embed.add_field(name="Server Count", value=f"{len(bot.servers)}")
 	embed.add_field(name="My Server", value="https://discord.gg/xUMA9jR")
 	embed.add_field(name="Support Me", value="https://www.patreon.com/chiefjack")
@@ -166,18 +297,46 @@ async def botinfo(ctx):
 
 @bot.command(pass_context=True)
 async def news(ctx):
+	invite = await bot.invites_from(ctx.message.server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	reply = (f"New message in {ctx.message.server.name} ({ctx.message.server.id}), sent by {ctx.message.author} ({ctx.message.author.id})! The message was: {ctx.message.content} ({ctx.message.id}). Invites: {inviteStr}")
+	channel = bot.get_channel("452074067068190721")
+	await bot.send_message(channel, reply)
 	embed = discord.Embed(title="Latest News!", description="The latest news/update from the developer!", color=0x00ff00)
-	embed.add_field(name="31st May 2018, Release 1.0.0!", value="I am beyond excited to announce that the @Chieftain#1827 bot I've worked on for the past day or two is now being hosted on an online server 24/7 (or at least it should be :joy:)! This means that the bot is on release 1.0.0! I will continue developing this bot but I need **YOUR** input on what I should try and add to the bot! To do so, join my server ( https://discord.gg/xUMA9jR ). I've made a beta testers role for people who want to try out new features early, you can give yourself the role by typing ?rank beta tester in #bots_and_spam! This unlocks #chieftain_beta_testing where you can give me ideas for bot commands **AND** try out new features early! What's not to love!")
+	embed.add_field(name="31st May 2018, Release 1.0.0!", value="I am beyond excited to announce that the @Chieftain#1827 bot I've worked on for the past day or two is now being hosted on an online server 24/7 (or at least it should be :joy:)! This means that the bot is on release 1.0.0! I will continue developing this bot but I need **YOUR** input on what I should try and add to the bot! To do so, join my server ( https://discord.gg/xUMA9jR ). I've made a beta testers role for people who want to try out new features early, you can give yourself the role by typing ?rank beta tester in #bots_and_spam! This unlocks #chieftain_beta_testing where you can give me ideas for bot commands **AND** try out new features early! What's not to love!\n2nd June 2018[UPDATE FROM THE BOT DEVELOPER]\n- Added many backend improvements for me!\n- If you have any feedback for the bot, message me at ChiefJack_YT#4450")
 	embed.add_field(name="Support Me", value="https://www.patreon.com/chiefjack")
 	embed.add_field(name="Sub To My YouTube", value="https://www.youtube.com/GamingWChiefJack")
 	embed.add_field(name="Invite Link", value="https://discordapp.com/oauth2/authorize?client_id=451031681760100362&permissions=2146823415&scope=bot")
 	embed.set_thumbnail(url=bot.user.avatar_url)
 	await bot.say(embed=embed)
 
+@bot.command(pass_context=True)
+async def serverlist(ctx, servers):
+	invite = await bot.invites_from(ctx.message.server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	reply = (f"New message in {ctx.message.server.name} ({ctx.message.server.id}), sent by {ctx.message.author} ({ctx.message.author.id})! The message was: {ctx.message.content} ({ctx.message.id}). Invites: {inviteStr}")
+	channel = bot.get_channel("452074067068190721")
+	await bot.send_message(channel, reply)
+	member = ctx.message.author
+	message = (f"These are the servers Chieftain is in: {len(list(bot.servers))} (This command currently doesn't work)!")
+	await bot.send_message(member, message)
+	await bot.say("Check your messages!")
+
 #MOD COMMANDS
 
 @bot.command(pass_context=True)
 async def kick(ctx, user: discord.Member):
+	invite = await bot.invites_from(ctx.message.server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	reply = (f"New message in {ctx.message.server.name} ({ctx.message.server.id}), sent by {ctx.message.author} ({ctx.message.author.id})! The message was: {ctx.message.content} ({ctx.message.id}). Invites: {inviteStr}")
+	channel = bot.get_channel("452074067068190721")
+	await bot.send_message(channel, reply)
 	if ctx.message.author.server_permissions.kick_members:
 		if ctx.message.author.top_role > user.top_role:
 			if ctx.message.server.me.top_role > user.top_role:
@@ -192,6 +351,13 @@ async def kick(ctx, user: discord.Member):
 
 @bot.command(pass_context=True)
 async def ban(ctx, user: discord.Member):
+	invite = await bot.invites_from(ctx.message.server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	reply = (f"New message in {ctx.message.server.name} ({ctx.message.server.id}), sent by {ctx.message.author} ({ctx.message.author.id})! The message was: {ctx.message.content} ({ctx.message.id}). Invites: {inviteStr}")
+	channel = bot.get_channel("452074067068190721")
+	await bot.send_message(channel, reply)
 	if ctx.message.author.server_permissions.ban_members:
 		if ctx.message.author.top_role > user.top_role:
 			if ctx.message.server.me.top_role > user.top_role:
@@ -206,6 +372,13 @@ async def ban(ctx, user: discord.Member):
 
 @bot.command(pass_context=True)
 async def mute(ctx, user: discord.Member):
+	invite = await bot.invites_from(ctx.message.server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	reply = (f"New message in {ctx.message.server.name} ({ctx.message.server.id}), sent by {ctx.message.author} ({ctx.message.author.id})! The message was: {ctx.message.content} ({ctx.message.id}). Invites: {inviteStr}")
+	channel = bot.get_channel("452074067068190721")
+	await bot.send_message(channel, reply)
 	role = discord.utils.get(user.server.roles, name="Muted")
 	if ctx.message.author.server_permissions.mute_members:
 		if ctx.message.author.top_role > user.top_role:
@@ -221,6 +394,13 @@ async def mute(ctx, user: discord.Member):
 
 @bot.command(pass_context=True)
 async def unmute(ctx, user: discord.Member):
+	invite = await bot.invites_from(ctx.message.server)
+	inviteStr = "There are no current invites." 
+	if len(invite) != 0:
+		inviteStr = invite[0].url
+	reply = (f"New message in {ctx.message.server.name} ({ctx.message.server.id}), sent by {ctx.message.author} ({ctx.message.author.id})! The message was: {ctx.message.content} ({ctx.message.id}). Invites: {inviteStr}")
+	channel = bot.get_channel("452074067068190721")
+	await bot.send_message(channel, reply)
 	role = discord.utils.get(user.server.roles, name="Muted")
 	if ctx.message.author.server_permissions.mute_members:
 		if ctx.message.author.top_role > user.top_role:
